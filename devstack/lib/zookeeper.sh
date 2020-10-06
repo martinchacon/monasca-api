@@ -48,10 +48,10 @@ function configure_zookeeper {
 }
 
 function install_zookeeper {
-    echo_summary "Install Monasca Kafka"
+    echo_summary "Install Monasca Zookeeper"
     
     local zookeeper_tarball=zookeeper-${ZOOKEEPER_VERSION}.tar.gz
-    local zookeeper_tarball_url=${APACHE_ARCHIVES}zookeeper/zookeeper-${ZOOKEEPER_VERSION}/${kafka_tarball}
+    local zookeeper_tarball_url=${APACHE_ARCHIVES}zookeeper/zookeeper-${ZOOKEEPER_VERSION}/${zookeeper_tarball}
 
     local zookeeper_tarball_dest
     zookeeper_tarball_dest=`get_extra_file ${zookeeper_tarball_url}`
