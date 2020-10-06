@@ -48,19 +48,34 @@ function configure_zookeeper {
 }
 
 function install_zookeeper {
-    if is_zookeeper_enabled; then
-        if is_ubuntu; then
-            install_package zookeeperd
-        else
-            die $LINENO "Don't know how to install zookeeper on this platform"
-        fi
-    fi
+    echo_summary "Install Monasca Kafka"
+    
+    local zookeeper_tarball=zookeeper-${ZOOKEEPER_VERSION}.tar.gz
+    local zookeeper_tarball_url=${APACHE_ARCHIVES}zookeeper/zookeeper-${ZOOKEEPER_VERSION}/${kafka_tarball}
 
-    # NOTE(trebskit) it shouldn't really be done here
-    # but monasca devstack cannot allow it do be done properly
-    # we'd have to first refactor parts where services are:
-    # installed, configured and started in single phase
-    configure_zookeeper
+    local zookeeper_tarball_dest
+    zookeeper_tarball_dest=`get_extra_file ${zookeeper_tarball_url}`
+
+    sudo groupadd --system zookeeper || true
+    sudo useradd --system -g zookeeper zookeeper || true
+    sudo tar -xzf ${zookeeper_tarball_dest} -C /opt
+    sudo ln -sf /opt/zookeeper_${ZOOKEEPER_VERSION} /opt/zookeeper
+
+
+
+    #if is_zookeeper_enabled; then
+    #    if is_ubuntu; then
+    #        install_package zookeeperd
+    #    else
+    #        die $LINENO "Don't know how to install zookeeper on this platform"
+    #    fi
+    #fi
+
+    ## NOTE(trebskit) it shouldn't really be done here
+    ## but monasca devstack cannot allow it do be done properly
+    ## we'd have to first refactor parts where services are:
+    ## installed, configured and started in single phase
+    #configure_zookeeper
 }
 
 $_XTRACE_ZOOKEEPER
