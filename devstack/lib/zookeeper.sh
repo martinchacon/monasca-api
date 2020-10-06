@@ -60,7 +60,7 @@ function install_zookeeper {
     # but monasca devstack cannot allow it do be done properly
     # we'd have to first refactor parts where services are:
     # installed, configured and started in single phase
-    configure_zookeeper
+    # configure_zookeeper
 }
 
 $_XTRACE_ZOOKEEPER
