@@ -25,7 +25,7 @@ set +o xtrace
 
 # Set up default directories
 ZOOKEEPER_DATA_DIR=$DEST/data/zookeeper
-ZOOKEEPER_CONF_DIR=/etc/zookeeper
+ZOOKEEPER_CONF_DIR=/opt/zookeeper/conf
 
 function is_zookeeper_enabled {
     is_service_enabled monasca-zookeeper && return 0
@@ -59,10 +59,21 @@ function install_zookeeper {
     sudo groupadd --system zookeeper || true
     sudo useradd --system -g zookeeper zookeeper || true
     sudo tar -xzf ${zookeeper_tarball_dest} -C /opt
-    sudo ln -sf /opt/zookeeper_${ZOOKEEPER_VERSION} /opt/zookeeper
+    sudo ln -sf /opt/zookeeper-${ZOOKEEPER_VERSION} /opt/zookeeper
+    sudo cp $PLUGIN_FILES/zookeeper/zoo.cfg $ZOOKEEPER_CONF_DIR
+    sudo chown -R zookeeper:zookeeper /opt/zookeeper
 
+    sudo cp -f "${MONASCA_API_DIR}"/devstack/files/zookeeper/zookeeper.service /etc/systemd/system/zookeeper.service
+    sudo chown root:root /etc/systemd/system/kafka.service
+    sudo chmod 644 /etc/systemd/system/zookeeper.service
+    
+    #sudo chown zookeeper:zookeeper /var/log/zookeeper
+    #sudo chmod 755 /var/log/zookeeper
 
-
+    sudo systemctl daemon-reload
+    sudo systemctl enable zookeeper
+    sudo systemctl start zookeeper || sudo systemctl restart zookeeper
+ 
     #if is_zookeeper_enabled; then
     #    if is_ubuntu; then
     #        install_package zookeeperd
