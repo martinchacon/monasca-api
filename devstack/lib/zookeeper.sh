@@ -61,7 +61,10 @@ function install_zookeeper {
     sudo tar -xzf ${zookeeper_tarball_dest} -C /opt
     sudo ln -sf /opt/zookeeper-${ZOOKEEPER_VERSION} /opt/zookeeper
     sudo cp $PLUGIN_FILES/zookeeper/zoo.cfg $ZOOKEEPER_CONF_DIR
-    sudo chown -R zookeeper:zookeeper /opt/zookeeper
+    sudo chown -R zookeeper:zookeeper /opt/zookeeper/
+
+    mkdir /var/lib/zookeeper
+    chown -R zookeeper:zookeeper /var/lib/zookeeper
 
     sudo cp -f "${MONASCA_API_DIR}"/devstack/files/zookeeper/zookeeper.service /etc/systemd/system/zookeeper.service
     sudo chown root:root /etc/systemd/system/kafka.service
