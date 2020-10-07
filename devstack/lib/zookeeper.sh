@@ -17,18 +17,25 @@
 _XTRACE_ZOOKEEPER=$(set +o | grep xtrace)
 set +o xtrace
 
-# Set up default directories
-ZOOKEEPER_DATA_DIR=$DEST/data/zookeeper
-ZOOKEEPER_CONF_DIR=/opt/zookeeper/conf
-
 function is_zookeeper_enabled {
     is_service_enabled monasca-zookeeper && return 0
     return 1
 }
 
 function clean_zookeeper {
-    sudo rm -rf $ZOOKEEPER_DATA_DIR
-    apt_get -y purge zookeeper
+
+    if is_zookeeper_enabled; then
+        echo_summary "Cleaning Monasca Zookeeper"
+
+        sudo systemctl disable zookeeper
+        sudo systemctl stop zookeeper
+        sudo rm -rf /var/log/zookeeper
+        sudo rm -rf /var/lib/zookeeper
+        sudo rm -rf /opt/zookeeper-${ZOOKEEPER_VERSION}
+        sudo rm -rf /opt/zookeeper
+        sudo rm -rf /etc/systemd/system/zookeeper.service
+        sudo systemctl daemon-reload
+    fi
 }
 
 function install_zookeeper {
@@ -45,7 +52,7 @@ function install_zookeeper {
         sudo useradd --system -g zookeeper zookeeper || true
         sudo tar -xzf ${zookeeper_tarball_dest} -C /opt 
         sudo ln -sf /opt/zookeeper-${ZOOKEEPER_VERSION} /opt/zookeeper
-        sudo cp $PLUGIN_FILES/zookeeper/* $ZOOKEEPER_CONF_DIR
+        sudo cp $PLUGIN_FILES/zookeeper/* /opt/zookeeper/conf
         sudo chown -R zookeeper:zookeeper /opt/zookeeper/
 
         sudo mkdir /var/log/zookeeper
@@ -61,12 +68,7 @@ function install_zookeeper {
         sudo systemctl daemon-reload
         sudo systemctl enable zookeeper
         sudo systemctl start zookeeper || sudo systemctl restart zookeeper
-
     fi
-	
-    echo_summary "Install Monasca Zookeeper"
-   sudo systemctl start zookeeper || sudo systemctl restart zookeeper
- 
 }
 
 $_XTRACE_ZOOKEEPER
