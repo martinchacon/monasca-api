@@ -60,7 +60,7 @@ function install_zookeeper {
     sudo useradd --system -g zookeeper zookeeper || true
     sudo tar -xzf ${zookeeper_tarball_dest} -C /opt
     sudo ln -sf /opt/zookeeper-${ZOOKEEPER_VERSION} /opt/zookeeper
-    sudo cp $PLUGIN_FILES/zookeeper/* $ZOOKEEPER_CONF_DIR
+    sudo cp $PLUGIN_FILES/zookeeper/zoo.cfg $ZOOKEEPER_CONF_DIR
     sudo chown -R zookeeper:zookeeper /opt/zookeeper/
 
     sudo mkdir /var/log/zookeeper
